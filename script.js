@@ -9,8 +9,8 @@
 let score1 = 0;
 let score2 = 0;
 
-let race1 = 10;
-let race2 = 10;
+let race1 = 0;
+let race2 = 0;
 
 let winner = null;
 
@@ -129,8 +129,8 @@ function loadState() {
     // Race targets
     // ----------------------------
 
-    race1 = Number(data.race1) || 8;
-    race2 = Number(data.race2) || 9;
+    race1 = Number(data.race1) || 0;
+    race2 = Number(data.race2) || 0;
 
     race1Input.value = race1;
     race2Input.value = race2;
@@ -716,8 +716,8 @@ resetButton.addEventListener(
     // Reset race targets
     // ----------------------------
 
-    race1 = 10;
-    race2 = 10;
+    race1 = 0;
+    race2 = 0;
 
 
     // ----------------------------
