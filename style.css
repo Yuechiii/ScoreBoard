@@ -1,350 +1,907 @@
-:root {
-  --border: #242424;
-  --text: #111;
-  --muted: #666;
-  --green: #159447;
-  --red: #e7374b;
-  --blue: #1877f2;
-  --orange: #ff9800;
-  --panel: #fff;
-  --bg: #f2f3f5;
+/* =====================================================
+   GLOBAL RESET
+===================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-* { box-sizing: border-box; }
+
+/* =====================================================
+   BODY
+===================================================== */
 
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  min-height: 100vh;
 
-button, input { font: inherit; }
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 
-button { cursor: pointer; }
+  background: #f3f4f6;
 
-.app-shell {
-  width: min(1200px, calc(100% - 28px));
-  margin: 18px auto;
-  background: var(--panel);
-  border: 3px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 22px 14px;
-  box-shadow: 0 5px 18px rgba(0,0,0,.08);
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 18px;
-  border-bottom: 2px solid var(--border);
-}
-
-.eyebrow {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  color: var(--muted);
-}
-
-h1 {
-  margin: 3px 0 0;
-  font-size: 25px;
-  letter-spacing: .5px;
-}
-
-.file-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.btn {
-  border: 0;
-  border-radius: 5px;
-  padding: 9px 14px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.primary { background: #1d6ee8; }
-.secondary { background: #333; }
-.danger-outline { background: #fff; color: #d92335; border: 1px solid #d92335; }
-.small { padding: 7px 10px; font-size: 12px; }
-
-.players {
-  display: grid;
-  grid-template-columns: 1fr 170px 1fr;
-  gap: 18px;
-  align-items: center;
-  padding: 18px 10px 20px;
-}
-
-.player-card { text-align: center; min-width: 0; }
-
-.file-picker {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5px;
-  min-height: 25px;
-  font-size: 11px;
-  color: #555;
+
+  padding: 24px;
 }
 
-.file-label {
-  display: inline-block;
-  border: 1px solid #888;
-  background: #f8f8f8;
-  padding: 2px 5px;
-  cursor: pointer;
-  color: #111;
-}
 
-.player-photo {
-  display: block;
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin: 3px auto 8px;
-  border: 3px solid #222;
-  border-radius: 7px;
-  background: #eee;
-}
-
-.player-name {
-  display: block;
-  width: min(220px, 90%);
-  margin: 0 auto;
-  border: 0;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 800;
-  text-transform: uppercase;
-  outline: none;
-  padding: 3px;
-}
-
-.round-label {
-  margin-top: 7px;
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.vs { text-align: center; }
-
-.race-box {
-  border: 2px solid var(--border);
-  padding: 10px 12px;
-  font-size: 18px;
-  font-weight: 800;
-  background: #fafafa;
-}
-
-.race-box span { display: block; }
-
-#targetInput {
-  width: 55px;
-  border: 0;
-  background: transparent;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 900;
-  outline: none;
-}
-
-.match-status {
-  margin-top: 9px;
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--green);
-}
-
-.match-status.finished { color: var(--red); }
+/* =====================================================
+   MAIN SCOREBOARD
+===================================================== */
 
 .scoreboard {
-  display: grid;
-  grid-template-columns: 1fr 2px 1fr;
-  min-height: 300px;
-  border-top: 2px solid var(--border);
-  border-bottom: 2px solid var(--border);
-  padding: 22px 0;
+  width: 100%;
+  max-width: 1050px;
+
+  background: #ffffff;
+
+  border: 1px solid #d9d9d9;
+  border-radius: 18px;
+
+  padding: 30px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08);
+
+  overflow: hidden;
 }
+
+
+/* =====================================================
+   TOP SECTION
+===================================================== */
+
+.top-section {
+  width: 100%;
+
+  display: grid;
+
+  /*
+    PLAYER 1
+    RACE NUMBER
+    RACE
+    RACE NUMBER
+    PLAYER 2
+  */
+
+  grid-template-columns:
+    minmax(180px, 1fr)
+    80px
+    150px
+    80px
+    minmax(180px, 1fr);
+
+  align-items: center;
+
+  column-gap: 25px;
+}
+
+
+/* =====================================================
+   PLAYER SIDE
+===================================================== */
+
+.player-side {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+
+/* =====================================================
+   IMAGE UPLOAD
+===================================================== */
+
+.image-upload {
+  position: relative;
+
+  display: block;
+
+  width: 210px;
+  height: 210px;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  background: #e5e7eb;
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.14);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.image-upload:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =====================================================
+   HIDDEN FILE INPUT
+===================================================== */
+
+.image-input {
+  display: none;
+}
+
+
+/* =====================================================
+   PLAYER IMAGE
+===================================================== */
+
+.image-upload img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  background: #e5e7eb;
+}
+
+
+/* =====================================================
+   IMAGE HOVER EFFECT
+===================================================== */
+
+.image-upload::after {
+  content: "Change photo";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 12px;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  color: #ffffff;
+
+  text-align: center;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  opacity: 0;
+
+  transition: opacity 0.2s ease;
+}
+
+
+.image-upload:hover::after {
+  opacity: 1;
+}
+
+
+/* =====================================================
+   PLAYER NAME
+===================================================== */
+
+.player-name {
+  width: 210px;
+
+  margin-top: 14px;
+
+  padding: 6px 10px;
+
+  border: none;
+  border-bottom: 2px solid transparent;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #111827;
+
+  text-align: center;
+
+  font-size: 25px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.player-name:hover {
+  background: #f8f8f8;
+}
+
+
+.player-name:focus {
+  border-bottom-color: #111827;
+}
+
+
+/* =====================================================
+   RACE NUMBERS
+===================================================== */
+
+.race-number {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+}
+
+
+.race-number input {
+  width: 75px;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #111827;
+
+  text-align: center;
+
+  font-size: 52px;
+
+  font-weight: 700;
+
+  line-height: 1;
+
+  padding: 0;
+}
+
+
+/* Remove number arrows */
+
+.race-number input::-webkit-inner-spin-button,
+.race-number input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.race-number input {
+  appearance: textfield;
+}
+
+
+/* =====================================================
+   RACE TITLE
+===================================================== */
+
+.race-title {
+  color: #6b7280;
+
+  text-align: center;
+
+  font-size: 34px;
+
+  font-weight: 800;
+
+  letter-spacing: 3px;
+}
+
+
+/* =====================================================
+   HORIZONTAL DIVIDER
+===================================================== */
+
+.horizontal-divider {
+  width: 100%;
+
+  height: 3px;
+
+  margin: 32px 0 0;
+
+  background: #111827;
+
+  border-radius: 10px;
+}
+
+
+/* =====================================================
+   SCORE SECTION
+===================================================== */
+
+.score-section {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    3px
+    minmax(0, 1fr);
+
+  min-height: 330px;
+}
+
+
+/* =====================================================
+   SCORE SIDE
+===================================================== */
 
 .score-side {
+  min-width: 0;
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
-  justify-content: center;
+
+  justify-content: flex-start;
+
+  padding: 38px 20px 30px;
 }
 
-.score-divider {
-  background: var(--border);
-  margin: 0 5px;
-}
 
-.score-title {
+/* =====================================================
+   SCORE LABEL
+===================================================== */
+
+.score-label {
+  color: #6b7280;
+
   font-size: 25px;
-  font-weight: 900;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  margin-bottom: 12px;
 }
 
-.score {
-  font-size: 104px;
-  line-height: 1;
-  font-weight: 900;
-  margin: 10px 0 17px;
-}
 
-.controls {
-  display: flex;
-  gap: 10px;
-}
+/* =====================================================
+   SCORE NUMBER
+===================================================== */
 
-.score-btn, .round-btn {
-  border: 0;
-  border-radius: 5px;
-  color: white;
+.score-number {
+  color: #111827;
+
+  font-size: 120px;
+
   font-weight: 800;
-}
 
-.score-btn {
-  width: 48px;
-  height: 34px;
-}
+  line-height: 0.95;
 
-.plus { background: var(--green); }
-.minus { background: var(--red); }
+  letter-spacing: -4px;
 
-.round-btn {
-  margin-top: 8px;
-  padding: 9px 14px;
-  background: var(--blue);
-}
+  margin-bottom: 38px;
 
-.match-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 18px 0 24px;
-}
-
-.next-round {
-  border: 0;
-  border-radius: 5px;
-  padding: 11px 25px;
-  background: var(--orange);
-  color: white;
-  font-weight: 900;
-}
-
-.history-section {
-  border-top: 1px solid #ddd;
-  padding-top: 20px;
-}
-
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 15px;
-  margin-bottom: 12px;
-}
-
-h2 { margin: 2px 0 0; font-size: 24px; }
-
-.history-summary {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.summary-card {
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  padding: 8px 13px;
-  min-width: 125px;
-  background: #fafafa;
-}
-
-.summary-card strong { display: block; font-size: 20px; }
-.summary-card span { color: #666; font-size: 11px; }
-
-.table-wrap { overflow-x: auto; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
-
-th { background: #f0f0f0; }
-
-.empty { text-align: center; color: #888; padding: 22px; }
-
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  color: #777;
-  font-size: 11px;
-  padding-top: 13px;
-}
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.55);
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  z-index: 10;
-}
-
-.hidden { display: none; }
-
-.modal {
-  width: min(420px, 100%);
-  background: white;
-  border-radius: 10px;
-  padding: 24px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.3);
   text-align: center;
 }
 
-.modal h3 { margin: 0 0 8px; font-size: 23px; }
-.modal p { color: #666; font-size: 14px; }
 
-.modal-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 20px 0 10px;
+/* =====================================================
+   VERTICAL DIVIDER
+===================================================== */
+
+.vertical-divider {
+  width: 3px;
+
+  min-height: 260px;
+
+  margin-top: 30px;
+
+  background: #111827;
+
+  border-radius: 10px;
 }
 
-.winner-choice {
-  border: 2px solid #222;
-  background: #fff;
-  padding: 15px 10px;
-  border-radius: 7px;
-  font-weight: 900;
+
+/* =====================================================
+   SCORE BUTTONS
+===================================================== */
+
+.score-buttons {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
 }
 
-.winner-choice:hover { background: #eee; }
 
-.cancel { margin-top: 4px; }
+/* =====================================================
+   SCORE BUTTON
+===================================================== */
 
-@media (max-width: 760px) {
-  .app-shell { width: calc(100% - 10px); margin: 5px auto; padding: 12px; }
-  .topbar { align-items: flex-start; flex-direction: column; }
-  .players { grid-template-columns: 1fr 1fr; }
-  .vs { grid-column: 1 / -1; grid-row: 1; }
-  .player-card { grid-row: 2; }
-  .score { font-size: 78px; }
-  .score-title { font-size: 20px; }
-  .scoreboard { min-height: 260px; }
+.score-button {
+  min-width: 70px;
+  height: 48px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.1s ease,
+    filter 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+
+.score-button:hover {
+  filter: brightness(0.95);
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+
+.score-button:active {
+  transform: scale(0.94);
+}
+
+
+/* =====================================================
+   MINUS
+===================================================== */
+
+.score-button.subtract {
+  background: #fee2e2;
+
+  color: #b91c1c;
+}
+
+
+/* =====================================================
+   PLUS
+===================================================== */
+
+.score-button.add {
+  background: #dcfce7;
+
+  color: #15803d;
+}
+
+
+/* =====================================================
+   WINNER MESSAGE
+===================================================== */
+
+/* =====================================================
+   WINNER MESSAGE
+===================================================== */
+
+.winner-message {
+  display: none;
+
+  width: 100%;
+
+  margin-bottom: 22px;
+
+  padding: 14px 20px;
+
+  border-radius: 10px;
+
+  background: #111827;
+
+  color: #ffffff;
+
+  text-align: center;
+
+  font-size: 26px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   RESET AREA
+===================================================== */
+
+.reset-container {
+  display: flex;
+
+  justify-content: center;
+
+  margin-top: 8px;
+}
+
+
+/* =====================================================
+   RESET BUTTON
+===================================================== */
+
+.reset-button {
+  min-width: 130px;
+
+  height: 42px;
+
+  padding: 0 24px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  background: #f3f4f6;
+
+  color: #374151;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+
+.reset-button:hover {
+  background: #e5e7eb;
+}
+
+
+.reset-button:active {
+  transform: scale(0.96);
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 850px) {
+
+  body {
+    padding: 15px;
+  }
+
+
+  .scoreboard {
+    padding: 22px;
+
+    border-radius: 15px;
+  }
+
+
+  .top-section {
+    grid-template-columns:
+      minmax(130px, 1fr)
+      60px
+      100px
+      60px
+      minmax(130px, 1fr);
+
+    column-gap: 12px;
+  }
+
+
+  .image-upload {
+    width: 160px;
+    height: 160px;
+
+    border-radius: 12px;
+  }
+
+
+  .player-name {
+    width: 160px;
+
+    font-size: 20px;
+  }
+
+
+  .race-number input {
+    width: 60px;
+
+    font-size: 42px;
+  }
+
+
+  .race-title {
+    font-size: 28px;
+
+    letter-spacing: 2px;
+  }
+
+
+  .horizontal-divider {
+    margin-top: 25px;
+  }
+
+
+  .score-section {
+    min-height: 280px;
+  }
+
+
+  .score-side {
+    padding-top: 30px;
+  }
+
+
+  .score-label {
+    font-size: 21px;
+  }
+
+
+  .score-number {
+    font-size: 90px;
+
+    margin-bottom: 30px;
+  }
+
+
+  .vertical-divider {
+    min-height: 220px;
+
+    margin-top: 25px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 8px;
+
+    align-items: flex-start;
+  }
+
+
+  .scoreboard {
+    margin-top: 5px;
+
+    padding: 15px 10px;
+
+    border-radius: 12px;
+  }
+
+
+  .top-section {
+    grid-template-columns:
+      minmax(70px, 1fr)
+      38px
+      65px
+      38px
+      minmax(70px, 1fr);
+
+    column-gap: 4px;
+  }
+
+
+  .image-upload {
+    width: 105px;
+    height: 105px;
+
+    border-radius: 9px;
+  }
+
+
+  .image-upload::after {
+    display: none;
+  }
+
+
+  .player-name {
+    width: 110px;
+
+    margin-top: 8px;
+
+    padding: 4px;
+
+    font-size: 14px;
+  }
+
+
+  .race-number input {
+    width: 38px;
+
+    font-size: 27px;
+  }
+
+
+  .race-title {
+    font-size: 23px;
+
+    letter-spacing: 1px;
+  }
+
+
+  .horizontal-divider {
+    height: 2px;
+
+    margin-top: 18px;
+  }
+
+
+  .score-section {
+    min-height: 220px;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      2px
+      minmax(0, 1fr);
+  }
+
+
+  .score-side {
+    padding: 22px 5px 20px;
+  }
+
+
+  .score-label {
+    font-size: 17px;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 10px;
+  }
+
+
+  .score-number {
+    font-size: 65px;
+
+    letter-spacing: -2px;
+
+    margin-bottom: 25px;
+  }
+
+
+  .vertical-divider {
+    width: 2px;
+
+    min-height: 190px;
+
+    margin-top: 20px;
+  }
+
+
+  .score-buttons {
+    gap: 7px;
+  }
+
+
+  .score-button {
+    min-width: 48px;
+
+    height: 38px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+  }
+
+
+  .reset-button {
+    min-width: 110px;
+
+    height: 38px;
+
+    font-size: 14px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+  .scoreboard {
+    padding: 12px 7px;
+  }
+
+
+  .top-section {
+    grid-template-columns:
+      minmax(55px, 1fr)
+      30px
+      55px
+      30px
+      minmax(55px, 1fr);
+
+    column-gap: 2px;
+  }
+
+
+  .image-upload {
+    width: 82px;
+    height: 82px;
+  }
+
+
+  .player-name {
+    width: 90px;
+
+    font-size: 12px;
+  }
+
+
+  .race-number input {
+    width: 30px;
+
+    font-size: 23px;
+  }
+
+
+  .race-title {
+    font-size: 19px;
+  }
+
+
+  .horizontal-divider {
+    margin-top: 14px;
+  }
+
+
+  .score-side {
+    padding-top: 18px;
+  }
+
+
+  .score-label {
+    font-size: 15px;
+  }
+
+
+  .score-number {
+    font-size: 54px;
+
+    margin-bottom: 20px;
+  }
+
+
+  .vertical-divider {
+    min-height: 170px;
+  }
+
+
+  .score-button {
+    min-width: 40px;
+
+    height: 34px;
+
+    font-size: 12px;
+  }
+
 }
