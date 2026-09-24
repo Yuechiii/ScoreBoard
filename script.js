@@ -1,327 +1,497 @@
-/* =====================================================
-   GAME STATE
-===================================================== */
+// ============================================================
+// SCOREBOARD
+// ============================================================
 
-const game = {
+// ================= STATE =================
 
-    player1: 0,
+let score1 = 0;
+let score2 = 0;
 
-    player2: 0,
+let race1 = 8;
+let race2 = 9;
 
-    finished: false
-
-};
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const score1 = document.getElementById("score1");
-const score2 = document.getElementById("score2");
-
-const race1 = document.getElementById("race1");
-const race2 = document.getElementById("race2");
-
-const name1 = document.getElementById("name1");
-const name2 = document.getElementById("name2");
-
-const winnerMessage =
-    document.getElementById("winnerMessage");
+let winner = null;
 
 
-/* =====================================================
-   UPDATE SCORE DISPLAY
-===================================================== */
+// ================= ELEMENTS =================
 
-function updateDisplay() {
+// Scores
+const score1Element = document.getElementById("score1");
+const score2Element = document.getElementById("score2");
 
-    score1.textContent = game.player1;
+// Race targets
+const race1Input = document.getElementById("race1");
+const race2Input = document.getElementById("race2");
 
-    score2.textContent = game.player2;
+// Player names
+const name1Input = document.getElementById("name1");
+const name2Input = document.getElementById("name2");
 
+// Buttons
+const subtract1 = document.getElementById("subtract1");
+const add1 = document.getElementById("add1");
+
+const subtract2 = document.getElementById("subtract2");
+const add2 = document.getElementById("add2");
+
+const resetButton = document.getElementById("resetButton");
+
+// Images
+const imageInputs = document.querySelectorAll(".image-input");
+
+const playerImage1 = document.getElementById("playerImage1");
+const playerImage2 = document.getElementById("playerImage2");
+
+// Winner popup
+const winnerOverlay = document.getElementById("winnerOverlay");
+const winnerMessage = document.getElementById("winnerMessage");
+const closeWinner = document.getElementById("closeWinner");
+
+
+// ================= LOCAL STORAGE =================
+
+const STORAGE_KEY = "scoreboardData";
+
+
+// ================= SAVE STATE =================
+
+function saveState() {
+  const data = {
+    score1: score1,
+    score2: score2,
+
+    race1: race1,
+    race2: race2,
+
+    name1: name1Input.value,
+    name2: name2Input.value,
+
+    image1: playerImage1.src,
+    image2: playerImage2.src,
+
+    winner: winner
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
 
-/* =====================================================
-   GET RACE VALUE
-===================================================== */
+// ================= LOAD STATE =================
 
-function getRaceValue(input) {
+function loadState() {
+  const savedData = localStorage.getItem(STORAGE_KEY);
 
-    let value = parseInt(input.value, 10);
+  if (!savedData) {
+    updateDisplay();
+    return;
+  }
 
-    if (isNaN(value) || value < 1) {
+  try {
+    const data = JSON.parse(savedData);
 
-        value = 1;
+    // Scores
+    score1 = Number(data.score1) || 0;
+    score2 = Number(data.score2) || 0;
 
-        input.value = value;
+    // Race targets
+    race1 = Number(data.race1) || 8;
+    race2 = Number(data.race2) || 9;
 
+    race1Input.value = race1;
+    race2Input.value = race2;
+
+    // Names
+    if (data.name1) {
+      name1Input.value = data.name1;
     }
 
-    return value;
+    if (data.name2) {
+      name2Input.value = data.name2;
+    }
 
+    // Images
+    if (data.image1) {
+      playerImage1.src = data.image1;
+    }
+
+    if (data.image2) {
+      playerImage2.src = data.image2;
+    }
+
+    // Winner
+    winner = data.winner || null;
+
+    updateDisplay();
+
+  } catch (error) {
+    console.error("Failed to load scoreboard data:", error);
+
+    localStorage.removeItem(STORAGE_KEY);
+
+    updateDisplay();
+  }
 }
 
 
-/* =====================================================
-   CHECK WINNER
-===================================================== */
+// ================= UPDATE DISPLAY =================
+
+function updateDisplay() {
+  score1Element.textContent = score1;
+  score2Element.textContent = score2;
+
+  race1Input.value = race1;
+  race2Input.value = race2;
+
+  updateButtonState();
+}
+
+
+// ================= BUTTON STATE =================
+
+function updateButtonState() {
+  const gameFinished = winner !== null;
+
+  subtract1.disabled = gameFinished;
+  add1.disabled = gameFinished;
+
+  subtract2.disabled = gameFinished;
+  add2.disabled = gameFinished;
+
+  race1Input.disabled = gameFinished;
+  race2Input.disabled = gameFinished;
+
+  if (gameFinished) {
+    subtract1.classList.add("disabled");
+    add1.classList.add("disabled");
+
+    subtract2.classList.add("disabled");
+    add2.classList.add("disabled");
+  } else {
+    subtract1.classList.remove("disabled");
+    add1.classList.remove("disabled");
+
+    subtract2.classList.remove("disabled");
+    add2.classList.remove("disabled");
+  }
+}
+
+
+// ================= CHECK WINNER =================
 
 function checkWinner() {
 
-    if (game.finished) {
-        return;
-    }
+  // Don't check again if there is already a winner
+  if (winner !== null) {
+    return;
+  }
 
+  // Player 1 wins
+  if (score1 >= race1) {
+    winner = 1;
 
-    const target1 = getRaceValue(race1);
-    const target2 = getRaceValue(race2);
+    showWinner(name1Input.value || "Player 1");
 
+    saveState();
 
-    if (game.player1 >= target1) {
+    updateButtonState();
 
-        game.player1 = target1;
+    return;
+  }
 
-        game.finished = true;
+  // Player 2 wins
+  if (score2 >= race2) {
+    winner = 2;
 
-        showWinner(
-            name1.value.trim() || "Player 1"
-        );
+    showWinner(name2Input.value || "Player 2");
 
-        updateDisplay();
+    saveState();
 
-        return;
+    updateButtonState();
 
-    }
-
-
-    if (game.player2 >= target2) {
-
-        game.player2 = target2;
-
-        game.finished = true;
-
-        showWinner(
-            name2.value.trim() || "Player 2"
-        );
-
-        updateDisplay();
-
-    }
-
+    return;
+  }
 }
 
 
-/* =====================================================
-   SHOW WINNER
-===================================================== */
+// ================= SHOW WINNER =================
 
-function showWinner(name) {
+function showWinner(playerName) {
 
-    winnerMessage.textContent =
-        name.toUpperCase() + " WINS!";
+  winnerMessage.textContent = `${playerName} wins!`;
 
-    winnerMessage.style.display = "block";
-
+  winnerOverlay.classList.add("show");
 }
 
 
-/* =====================================================
-   ADD SCORE
-===================================================== */
+// ================= CLOSE WINNER =================
 
-function addScore(player) {
+function hideWinner() {
 
-    if (game.finished) {
-        return;
-    }
-
-
-    if (player === 1) {
-
-        game.player1++;
-
-    } else {
-
-        game.player2++;
-
-    }
-
-
-    updateDisplay();
-
-    checkWinner();
-
+  winnerOverlay.classList.remove("show");
 }
 
 
-/* =====================================================
-   SUBTRACT SCORE
-===================================================== */
+// ================= PLAYER 1 +1 =================
 
-function subtractScore(player) {
+add1.addEventListener("click", () => {
 
-    if (game.finished) {
-        return;
+  if (winner !== null) {
+    return;
+  }
+
+  score1++;
+
+  updateDisplay();
+
+  checkWinner();
+
+  saveState();
+});
+
+
+// ================= PLAYER 1 -1 =================
+
+subtract1.addEventListener("click", () => {
+
+  if (winner !== null) {
+    return;
+  }
+
+  if (score1 > 0) {
+    score1--;
+  }
+
+  updateDisplay();
+
+  saveState();
+});
+
+
+// ================= PLAYER 2 +1 =================
+
+add2.addEventListener("click", () => {
+
+  if (winner !== null) {
+    return;
+  }
+
+  score2++;
+
+  updateDisplay();
+
+  checkWinner();
+
+  saveState();
+});
+
+
+// ================= PLAYER 2 -1 =================
+
+subtract2.addEventListener("click", () => {
+
+  if (winner !== null) {
+    return;
+  }
+
+  if (score2 > 0) {
+    score2--;
+  }
+
+  updateDisplay();
+
+  saveState();
+});
+
+
+// ================= RACE TARGET 1 =================
+
+race1Input.addEventListener("change", () => {
+
+  if (winner !== null) {
+    return;
+  }
+
+  let value = parseInt(race1Input.value);
+
+  if (isNaN(value) || value < 1) {
+    value = 1;
+  }
+
+  race1 = value;
+
+  race1Input.value = race1;
+
+  checkWinner();
+
+  saveState();
+
+  updateDisplay();
+});
+
+
+// ================= RACE TARGET 2 =================
+
+race2Input.addEventListener("change", () => {
+
+  if (winner !== null) {
+    return;
+  }
+
+  let value = parseInt(race2Input.value);
+
+  if (isNaN(value) || value < 1) {
+    value = 1;
+  }
+
+  race2 = value;
+
+  race2Input.value = race2;
+
+  checkWinner();
+
+  saveState();
+
+  updateDisplay();
+});
+
+
+// ================= PLAYER NAME 1 =================
+
+name1Input.addEventListener("input", () => {
+
+  saveState();
+
+  // If player already won, update the popup name too
+  if (winner === 1) {
+    winnerMessage.textContent = `${name1Input.value || "Player 1"} wins!`;
+  }
+});
+
+
+// ================= PLAYER NAME 2 =================
+
+name2Input.addEventListener("input", () => {
+
+  saveState();
+
+  // If player already won, update the popup name too
+  if (winner === 2) {
+    winnerMessage.textContent = `${name2Input.value || "Player 2"} wins!`;
+  }
+});
+
+
+// ================= IMAGE UPLOAD =================
+
+imageInputs.forEach((input) => {
+
+  input.addEventListener("change", (event) => {
+
+    const file = event.target.files[0];
+
+    if (!file) {
+      return;
     }
 
-
-    if (player === 1) {
-
-        if (game.player1 > 0) {
-
-            game.player1--;
-
-        }
-
-    } else {
-
-        if (game.player2 > 0) {
-
-            game.player2--;
-
-        }
-
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
     }
 
+    const reader = new FileReader();
 
-    updateDisplay();
+    reader.onload = function (e) {
 
-}
+      const imageData = e.target.result;
 
+      const player = input.dataset.player;
 
-/* =====================================================
-   BUTTONS
-===================================================== */
+      if (player === "1") {
+        playerImage1.src = imageData;
+      }
 
-document
-    .getElementById("add1")
-    .addEventListener("click", () => {
+      if (player === "2") {
+        playerImage2.src = imageData;
+      }
 
-        addScore(1);
+      saveState();
+    };
 
-    });
-
-
-document
-    .getElementById("subtract1")
-    .addEventListener("click", () => {
-
-        subtractScore(1);
-
-    });
+    reader.readAsDataURL(file);
+  });
+});
 
 
-document
-    .getElementById("add2")
-    .addEventListener("click", () => {
+// ================= RESET =================
 
-        addScore(2);
+resetButton.addEventListener("click", () => {
 
-    });
+  const confirmed = confirm(
+    "Are you sure you want to reset the scoreboard?"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  score1 = 0;
+  score2 = 0;
+
+  winner = null;
+
+  // Restore default race targets
+  race1 = 8;
+  race2 = 9;
+
+  race1Input.value = race1;
+  race2Input.value = race2;
+
+  // Restore default names
+  name1Input.value = "Player 1";
+  name2Input.value = "Player 2";
+
+  // Close winner popup
+  hideWinner();
+
+  // Enable controls
+  updateDisplay();
+
+  // Save reset state
+  saveState();
+});
 
 
-document
-    .getElementById("subtract2")
-    .addEventListener("click", () => {
+// ================= CLOSE POPUP =================
 
-        subtractScore(2);
+closeWinner.addEventListener("click", () => {
 
-    });
-
-
-/* =====================================================
-   RACE TO
-===================================================== */
-
-race1.addEventListener("change", () => {
-
-    getRaceValue(race1);
-
-    checkWinner();
+  hideWinner();
 
 });
 
 
-race2.addEventListener("change", () => {
+// ================= CLICK OUTSIDE POPUP =================
 
-    getRaceValue(race2);
+winnerOverlay.addEventListener("click", (event) => {
 
-    checkWinner();
+  if (event.target === winnerOverlay) {
+    hideWinner();
+  }
 
 });
 
 
-/* =====================================================
-   IMAGE UPLOAD
-===================================================== */
+// ================= ESC KEY =================
 
-document
-    .querySelectorAll(".image-input")
-    .forEach(input => {
+document.addEventListener("keydown", (event) => {
 
-        input.addEventListener("change", function () {
+  if (event.key === "Escape") {
+    hideWinner();
+  }
 
-            const file = this.files[0];
-
-            if (!file) {
-                return;
-            }
+});
 
 
-            const player = this.dataset.player;
+// ================= INITIALIZE =================
 
-            const image =
-                document.getElementById(
-                    "playerImage" + player
-                );
-
-
-            const reader = new FileReader();
-
-
-            reader.onload = function (event) {
-
-                image.src = event.target.result;
-
-            };
-
-
-            reader.readAsDataURL(file);
-
-        });
-
-    });
-
-
-/* =====================================================
-   RESET
-===================================================== */
-
-document
-    .getElementById("resetButton")
-    .addEventListener("click", () => {
-
-        game.player1 = 0;
-
-        game.player2 = 0;
-
-        game.finished = false;
-
-
-        winnerMessage.style.display = "none";
-
-        winnerMessage.textContent = "";
-
-
-        updateDisplay();
-
-    });
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
-
-updateDisplay();
+loadState();
