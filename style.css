@@ -1,0 +1,350 @@
+:root {
+  --border: #242424;
+  --text: #111;
+  --muted: #666;
+  --green: #159447;
+  --red: #e7374b;
+  --blue: #1877f2;
+  --orange: #ff9800;
+  --panel: #fff;
+  --bg: #f2f3f5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button, input { font: inherit; }
+
+button { cursor: pointer; }
+
+.app-shell {
+  width: min(1200px, calc(100% - 28px));
+  margin: 18px auto;
+  background: var(--panel);
+  border: 3px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px 14px;
+  box-shadow: 0 5px 18px rgba(0,0,0,.08);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--border);
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+
+h1 {
+  margin: 3px 0 0;
+  font-size: 25px;
+  letter-spacing: .5px;
+}
+
+.file-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn {
+  border: 0;
+  border-radius: 5px;
+  padding: 9px 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.primary { background: #1d6ee8; }
+.secondary { background: #333; }
+.danger-outline { background: #fff; color: #d92335; border: 1px solid #d92335; }
+.small { padding: 7px 10px; font-size: 12px; }
+
+.players {
+  display: grid;
+  grid-template-columns: 1fr 170px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 10px 20px;
+}
+
+.player-card { text-align: center; min-width: 0; }
+
+.file-picker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-height: 25px;
+  font-size: 11px;
+  color: #555;
+}
+
+.file-label {
+  display: inline-block;
+  border: 1px solid #888;
+  background: #f8f8f8;
+  padding: 2px 5px;
+  cursor: pointer;
+  color: #111;
+}
+
+.player-photo {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin: 3px auto 8px;
+  border: 3px solid #222;
+  border-radius: 7px;
+  background: #eee;
+}
+
+.player-name {
+  display: block;
+  width: min(220px, 90%);
+  margin: 0 auto;
+  border: 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  outline: none;
+  padding: 3px;
+}
+
+.round-label {
+  margin-top: 7px;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.vs { text-align: center; }
+
+.race-box {
+  border: 2px solid var(--border);
+  padding: 10px 12px;
+  font-size: 18px;
+  font-weight: 800;
+  background: #fafafa;
+}
+
+.race-box span { display: block; }
+
+#targetInput {
+  width: 55px;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  outline: none;
+}
+
+.match-status {
+  margin-top: 9px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.match-status.finished { color: var(--red); }
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
+  min-height: 300px;
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  padding: 22px 0;
+}
+
+.score-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-divider {
+  background: var(--border);
+  margin: 0 5px;
+}
+
+.score-title {
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.score {
+  font-size: 104px;
+  line-height: 1;
+  font-weight: 900;
+  margin: 10px 0 17px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.score-btn, .round-btn {
+  border: 0;
+  border-radius: 5px;
+  color: white;
+  font-weight: 800;
+}
+
+.score-btn {
+  width: 48px;
+  height: 34px;
+}
+
+.plus { background: var(--green); }
+.minus { background: var(--red); }
+
+.round-btn {
+  margin-top: 8px;
+  padding: 9px 14px;
+  background: var(--blue);
+}
+
+.match-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 0 24px;
+}
+
+.next-round {
+  border: 0;
+  border-radius: 5px;
+  padding: 11px 25px;
+  background: var(--orange);
+  color: white;
+  font-weight: 900;
+}
+
+.history-section {
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+h2 { margin: 2px 0 0; font-size: 24px; }
+
+.history-summary {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.summary-card {
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  padding: 8px 13px;
+  min-width: 125px;
+  background: #fafafa;
+}
+
+.summary-card strong { display: block; font-size: 20px; }
+.summary-card span { color: #666; font-size: 11px; }
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+th { background: #f0f0f0; }
+
+.empty { text-align: center; color: #888; padding: 22px; }
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #777;
+  font-size: 11px;
+  padding-top: 13px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.hidden { display: none; }
+
+.modal {
+  width: min(420px, 100%);
+  background: white;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  text-align: center;
+}
+
+.modal h3 { margin: 0 0 8px; font-size: 23px; }
+.modal p { color: #666; font-size: 14px; }
+
+.modal-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0 10px;
+}
+
+.winner-choice {
+  border: 2px solid #222;
+  background: #fff;
+  padding: 15px 10px;
+  border-radius: 7px;
+  font-weight: 900;
+}
+
+.winner-choice:hover { background: #eee; }
+
+.cancel { margin-top: 4px; }
+
+@media (max-width: 760px) {
+  .app-shell { width: calc(100% - 10px); margin: 5px auto; padding: 12px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .players { grid-template-columns: 1fr 1fr; }
+  .vs { grid-column: 1 / -1; grid-row: 1; }
+  .player-card { grid-row: 2; }
+  .score { font-size: 78px; }
+  .score-title { font-size: 20px; }
+  .scoreboard { min-height: 260px; }
+}

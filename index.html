@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billiard Scoreboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">BILLIARD SCOREBOARD</div>
+        <h1>RACE TO <span id="targetDisplay">10</span></h1>
+      </div>
+      <div class="file-actions">
+        <button class="btn secondary" id="loadBtn">Load JSON</button>
+        <button class="btn primary" id="saveBtn">Save JSON</button>
+        <button class="btn danger-outline" id="resetBtn">Reset Match</button>
+        <input type="file" id="jsonFile" accept=".json,application/json" hidden>
+      </div>
+    </header>
+
+    <section class="players">
+      <article class="player-card" id="playerCardA">
+        <div class="file-picker">
+          <label class="file-label">Choose Photo
+            <input type="file" id="photoA" accept="image/*" hidden>
+          </label>
+          <span id="photoNameA">No photo selected</span>
+        </div>
+        <img id="photoPreviewA" class="player-photo" alt="Player A">
+        <input id="nameA" class="player-name" value="ROMMEL" maxlength="30">
+        <div class="round-label">ROUND WINS: <span id="roundsA">0</span></div>
+      </article>
+
+      <div class="vs">
+        <div class="race-box">
+          <span>RACE TO</span>
+          <input id="targetInput" type="number" min="1" max="99" value="10">
+        </div>
+        <div class="match-status" id="matchStatus">MATCH IN PROGRESS</div>
+      </div>
+
+      <article class="player-card" id="playerCardB">
+        <div class="file-picker">
+          <label class="file-label">Choose Photo
+            <input type="file" id="photoB" accept="image/*" hidden>
+          </label>
+          <span id="photoNameB">No photo selected</span>
+        </div>
+        <img id="photoPreviewB" class="player-photo" alt="Player B">
+        <input id="nameB" class="player-name" value="SHAY" maxlength="30">
+        <div class="round-label">ROUND WINS: <span id="roundsB">0</span></div>
+      </article>
+    </section>
+
+    <section class="scoreboard">
+      <div class="score-side">
+        <div class="score-title">SCORE</div>
+        <div class="score" id="scoreA">0</div>
+        <div class="controls">
+          <button class="score-btn plus" data-action="score" data-player="A" data-value="1">+1</button>
+          <button class="score-btn minus" data-action="score" data-player="A" data-value="-1">-1</button>
+        </div>
+        <button class="round-btn" data-action="round" data-player="A">+ ROUND WIN</button>
+      </div>
+
+      <div class="score-divider"></div>
+
+      <div class="score-side">
+        <div class="score-title">SCORE</div>
+        <div class="score" id="scoreB">0</div>
+        <div class="controls">
+          <button class="score-btn plus" data-action="score" data-player="B" data-value="1">+1</button>
+          <button class="score-btn minus" data-action="score" data-player="B" data-value="-1">-1</button>
+        </div>
+        <button class="round-btn" data-action="round" data-player="B">+ ROUND WIN</button>
+      </div>
+    </section>
+
+    <section class="match-actions">
+      <button class="next-round" id="nextRoundBtn">NEXT ROUND</button>
+      <button class="btn secondary" id="undoBtn">↶ Undo Last Round</button>
+    </section>
+
+    <section class="history-section">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">RECORDS</div>
+          <h2>Winner History</h2>
+        </div>
+        <button class="btn secondary small" id="clearHistoryBtn">Clear History</button>
+      </div>
+
+      <div class="history-summary" id="historySummary"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date & Time</th>
+              <th>Winner</th>
+              <th>Final Score</th>
+              <th>Round</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td colspan="5" class="empty">No completed rounds yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <span>JSON-only storage • No database required</span>
+      <span id="saveState">Not saved</span>
+    </footer>
+  </main>
+
+  <div class="modal-backdrop hidden" id="roundModal">
+    <div class="modal">
+      <h3>Who won this round?</h3>
+      <p>Record the winner in the history and start the next round.</p>
+      <div class="modal-buttons">
+        <button class="winner-choice" data-winner="A" id="winnerA">ROMMEL</button>
+        <button class="winner-choice" data-winner="B" id="winnerB">SHAY</button>
+      </div>
+      <button class="btn secondary cancel" id="cancelRound">Cancel</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
