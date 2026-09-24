@@ -9,8 +9,8 @@
 let score1 = 0;
 let score2 = 0;
 
-let race1 = 0;
-let race2 = 0;
+let race1 = 8;
+let race2 = 9;
 
 let winner = null;
 
@@ -117,6 +117,7 @@ function loadState() {
 
     const data = JSON.parse(savedData);
 
+
     // ----------------------------
     // Scores
     // ----------------------------
@@ -129,8 +130,17 @@ function loadState() {
     // Race targets
     // ----------------------------
 
-    race1 = Number(data.race1) || 0;
-    race2 = Number(data.race2) || 0;
+    race1 = Number(data.race1);
+
+    if (!Number.isFinite(race1) || race1 < 1) {
+      race1 = 8;
+    }
+
+    race2 = Number(data.race2);
+
+    if (!Number.isFinite(race2) || race2 < 1) {
+      race2 = 9;
+    }
 
     race1Input.value = race1;
     race2Input.value = race2;
@@ -244,25 +254,21 @@ function updateButtonState() {
 
 
   // Player 1
-
   subtract1.disabled = gameFinished;
   add1.disabled = gameFinished;
 
 
   // Player 2
-
   subtract2.disabled = gameFinished;
   add2.disabled = gameFinished;
 
 
   // Race targets
-
   race1Input.disabled = gameFinished;
   race2Input.disabled = gameFinished;
 
 
   // CSS state
-
   if (gameFinished) {
 
     subtract1.classList.add("disabled");
@@ -294,11 +300,15 @@ function checkWinner() {
   }
 
 
-  // ----------------------------
-  // Player 1
-  // ----------------------------
+  // ==========================================================
+  // PLAYER 1
+  // ==========================================================
 
-  if (score1 >= race1) {
+  if (
+    score1 > 0 &&
+    race1 > 0 &&
+    score1 >= race1
+  ) {
 
     winner = 1;
 
@@ -306,19 +316,23 @@ function checkWinner() {
       name1Input.value || "Player 1"
     );
 
-    saveState();
-
     updateButtonState();
+
+    saveState();
 
     return;
   }
 
 
-  // ----------------------------
-  // Player 2
-  // ----------------------------
+  // ==========================================================
+  // PLAYER 2
+  // ==========================================================
 
-  if (score2 >= race2) {
+  if (
+    score2 > 0 &&
+    race2 > 0 &&
+    score2 >= race2
+  ) {
 
     winner = 2;
 
@@ -326,9 +340,9 @@ function checkWinner() {
       name2Input.value || "Player 2"
     );
 
-    saveState();
-
     updateButtonState();
+
+    saveState();
 
     return;
   }
@@ -357,7 +371,6 @@ function showWinner(playerName) {
 // ============================================================
 
 function hideWinner() {
-
   winnerOverlay.classList.remove("show");
 }
 
@@ -372,19 +385,15 @@ add1.addEventListener("click", () => {
     return;
   }
 
-
   score1++;
 
-
-  // Update screen immediately
+  // Update screen
   updateDisplay();
 
-
-  // Check if Player 1 reached their race
+  // Check winner ONLY because the score changed
   checkWinner();
 
-
-  // SAVE IMMEDIATELY
+  // Save immediately
   saveState();
 });
 
@@ -399,17 +408,14 @@ subtract1.addEventListener("click", () => {
     return;
   }
 
-
   if (score1 > 0) {
     score1--;
   }
 
-
   // Update screen
   updateDisplay();
 
-
-  // SAVE IMMEDIATELY
+  // Save immediately
   saveState();
 });
 
@@ -424,19 +430,15 @@ add2.addEventListener("click", () => {
     return;
   }
 
-
   score2++;
-
 
   // Update screen
   updateDisplay();
 
-
-  // Check winner
+  // Check winner ONLY because the score changed
   checkWinner();
 
-
-  // SAVE IMMEDIATELY
+  // Save immediately
   saveState();
 });
 
@@ -451,17 +453,14 @@ subtract2.addEventListener("click", () => {
     return;
   }
 
-
   if (score2 > 0) {
     score2--;
   }
 
-
   // Update screen
   updateDisplay();
 
-
-  // SAVE IMMEDIATELY
+  // Save immediately
   saveState();
 });
 
@@ -470,212 +469,194 @@ subtract2.addEventListener("click", () => {
 // PLAYER 1 RACE TARGET
 // ============================================================
 
-race1Input.addEventListener(
-  "change",
-  () => {
+race1Input.addEventListener("change", () => {
 
-    if (winner !== null) {
-      return;
-    }
-
-
-    let value = parseInt(
-      race1Input.value,
-      10
-    );
-
-
-    if (isNaN(value) || value < 1) {
-      value = 1;
-    }
-
-
-    race1 = value;
-
-    race1Input.value = race1;
-
-
-    // Check if current score
-    // already reaches new target
-    checkWinner();
-
-
-    // SAVE IMMEDIATELY
-    saveState();
-
-
-    updateDisplay();
+  if (winner !== null) {
+    return;
   }
-);
+
+  let value = parseInt(
+    race1Input.value,
+    10
+  );
+
+  if (
+    isNaN(value) ||
+    value < 1
+  ) {
+    value = 1;
+  }
+
+  race1 = value;
+
+  race1Input.value = race1;
+
+  // IMPORTANT:
+  // Do NOT call checkWinner() here.
+  //
+  // Changing the race target should NEVER
+  // automatically declare a winner.
+  //
+  // A player can only win when their score
+  // changes and reaches the target.
+
+  updateDisplay();
+
+  // Save immediately
+  saveState();
+});
 
 
 // ============================================================
 // PLAYER 2 RACE TARGET
 // ============================================================
 
-race2Input.addEventListener(
-  "change",
-  () => {
+race2Input.addEventListener("change", () => {
 
-    if (winner !== null) {
-      return;
-    }
-
-
-    let value = parseInt(
-      race2Input.value,
-      10
-    );
-
-
-    if (isNaN(value) || value < 1) {
-      value = 1;
-    }
-
-
-    race2 = value;
-
-    race2Input.value = race2;
-
-
-    // Check if current score
-    // already reaches new target
-    checkWinner();
-
-
-    // SAVE IMMEDIATELY
-    saveState();
-
-
-    updateDisplay();
+  if (winner !== null) {
+    return;
   }
-);
+
+  let value = parseInt(
+    race2Input.value,
+    10
+  );
+
+  if (
+    isNaN(value) ||
+    value < 1
+  ) {
+    value = 1;
+  }
+
+  race2 = value;
+
+  race2Input.value = race2;
+
+  // IMPORTANT:
+  // Do NOT call checkWinner() here.
+
+  updateDisplay();
+
+  // Save immediately
+  saveState();
+});
 
 
 // ============================================================
 // PLAYER 1 NAME
 // ============================================================
 
-name1Input.addEventListener(
-  "input",
-  () => {
+name1Input.addEventListener("input", () => {
 
-    // SAVE IMMEDIATELY
-    saveState();
+  // Save immediately
+  saveState();
 
 
-    // Update winner popup if
-    // Player 1 already won
+  // Update winner popup if
+  // Player 1 already won
 
-    if (winner === 1) {
+  if (winner === 1) {
 
-      winnerTitle.textContent =
-        name1Input.value ||
-        "Player 1";
-    }
+    winnerTitle.textContent =
+      name1Input.value ||
+      "Player 1";
   }
-);
+});
 
 
 // ============================================================
 // PLAYER 2 NAME
 // ============================================================
 
-name2Input.addEventListener(
-  "input",
-  () => {
+name2Input.addEventListener("input", () => {
 
-    // SAVE IMMEDIATELY
-    saveState();
+  // Save immediately
+  saveState();
 
 
-    // Update winner popup if
-    // Player 2 already won
+  // Update winner popup if
+  // Player 2 already won
 
-    if (winner === 2) {
+  if (winner === 2) {
 
-      winnerTitle.textContent =
-        name2Input.value ||
-        "Player 2";
-    }
+    winnerTitle.textContent =
+      name2Input.value ||
+      "Player 2";
   }
-);
+});
 
 
 // ============================================================
 // PLAYER IMAGE UPLOAD
 // ============================================================
 
-imageInputs.forEach(
-  (input) => {
+imageInputs.forEach((input) => {
 
-    input.addEventListener(
-      "change",
-      (event) => {
+  input.addEventListener(
+    "change",
+    (event) => {
 
-        const file =
-          event.target.files[0];
-
-
-        if (!file) {
-          return;
-        }
+      const file =
+        event.target.files[0];
 
 
-        // Make sure it's an image
-        if (
-          !file.type.startsWith(
-            "image/"
-          )
-        ) {
-
-          alert(
-            "Please select an image file."
-          );
-
-          return;
-        }
-
-
-        const reader =
-          new FileReader();
-
-
-        reader.onload =
-          function (e) {
-
-            const imageData =
-              e.target.result;
-
-
-            const player =
-              input.dataset.player;
-
-
-            if (player === "1") {
-
-              playerImage1.src =
-                imageData;
-            }
-
-
-            if (player === "2") {
-
-              playerImage2.src =
-                imageData;
-            }
-
-
-            // SAVE IMMEDIATELY
-            saveState();
-          };
-
-
-        reader.readAsDataURL(file);
+      if (!file) {
+        return;
       }
-    );
-  }
-);
+
+
+      // Make sure it's an image
+      if (
+        !file.type.startsWith("image/")
+      ) {
+
+        alert(
+          "Please select an image file."
+        );
+
+        return;
+      }
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function (e) {
+
+          const imageData =
+            e.target.result;
+
+
+          const player =
+            input.dataset.player;
+
+
+          if (player === "1") {
+
+            playerImage1.src =
+              imageData;
+          }
+
+
+          if (player === "2") {
+
+            playerImage2.src =
+              imageData;
+          }
+
+
+          // Save immediately
+          saveState();
+        };
+
+
+      reader.readAsDataURL(file);
+    }
+  );
+});
 
 
 // ============================================================
@@ -716,8 +697,8 @@ resetButton.addEventListener(
     // Reset race targets
     // ----------------------------
 
-    race1 = 0;
-    race2 = 0;
+    race1 = 8;
+    race2 = 9;
 
 
     // ----------------------------
@@ -754,7 +735,7 @@ resetButton.addEventListener(
 
 
     // ----------------------------
-    // SAVE RESET IMMEDIATELY
+    // Save reset immediately
     // ----------------------------
 
     saveState();
@@ -784,8 +765,7 @@ winnerOverlay.addEventListener(
   (event) => {
 
     if (
-      event.target ===
-      winnerOverlay
+      event.target === winnerOverlay
     ) {
 
       hideWinner();
