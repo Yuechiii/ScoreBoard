@@ -716,8 +716,8 @@ resetButton.addEventListener(
     // Reset race targets
     // ----------------------------
 
-    race1 = 8;
-    race2 = 9;
+    race1 = 0;
+    race2 = 0;
 
 
     // ----------------------------
