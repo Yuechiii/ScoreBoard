@@ -46,6 +46,7 @@ const playerImage2 = document.getElementById("playerImage2");
 const winnerOverlay = document.getElementById("winnerOverlay");
 const winnerMessage = document.getElementById("winnerMessage");
 const closeWinner = document.getElementById("closeWinner");
+const winnerTitle = document.getElementById("winnerTitle");
 
 
 // ================= LOCAL STORAGE =================
@@ -216,8 +217,8 @@ function checkWinner() {
 // ================= SHOW WINNER =================
 
 function showWinner(playerName) {
-
-  winnerMessage.textContent = `${playerName} wins!`;
+  winnerTitle.textContent = playerName;
+  winnerMessage.textContent = "Winner!";
 
   winnerOverlay.classList.add("show");
 }
