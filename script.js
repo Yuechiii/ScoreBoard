@@ -1,19 +1,23 @@
 // ============================================================
-// SCOREBOARD
+// SCOREBOARD SCRIPT
 // ============================================================
 
-// ================= STATE =================
+// ============================================================
+// STATE
+// ============================================================
 
 let score1 = 0;
 let score2 = 0;
 
-let race1 = 8;
-let race2 = 9;
+let race1 = 0;
+let race2 = 0;
 
 let winner = null;
 
 
-// ================= ELEMENTS =================
+// ============================================================
+// ELEMENTS
+// ============================================================
 
 // Scores
 const score1Element = document.getElementById("score1");
@@ -27,13 +31,14 @@ const race2Input = document.getElementById("race2");
 const name1Input = document.getElementById("name1");
 const name2Input = document.getElementById("name2");
 
-// Buttons
+// Score buttons
 const subtract1 = document.getElementById("subtract1");
 const add1 = document.getElementById("add1");
 
 const subtract2 = document.getElementById("subtract2");
 const add2 = document.getElementById("add2");
 
+// Reset
 const resetButton = document.getElementById("resetButton");
 
 // Images
@@ -44,17 +49,21 @@ const playerImage2 = document.getElementById("playerImage2");
 
 // Winner popup
 const winnerOverlay = document.getElementById("winnerOverlay");
+const winnerTitle = document.getElementById("winnerTitle");
 const winnerMessage = document.getElementById("winnerMessage");
 const closeWinner = document.getElementById("closeWinner");
-const winnerTitle = document.getElementById("winnerTitle");
 
 
-// ================= LOCAL STORAGE =================
+// ============================================================
+// STORAGE
+// ============================================================
 
 const STORAGE_KEY = "scoreboardData";
 
 
-// ================= SAVE STATE =================
+// ============================================================
+// SAVE STATE
+// ============================================================
 
 function saveState() {
   const data = {
@@ -73,68 +82,146 @@ function saveState() {
     winner: winner
   };
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(data)
+    );
+
+    console.log("Scoreboard saved:", data);
+
+  } catch (error) {
+    console.error(
+      "Failed to save scoreboard:",
+      error
+    );
+  }
 }
 
 
-// ================= LOAD STATE =================
+// ============================================================
+// LOAD STATE
+// ============================================================
 
 function loadState() {
-  const savedData = localStorage.getItem(STORAGE_KEY);
-
-  if (!savedData) {
-    updateDisplay();
-    return;
-  }
-
   try {
+    const savedData = localStorage.getItem(
+      STORAGE_KEY
+    );
+
+    // Nothing saved yet
+    if (!savedData) {
+      updateDisplay();
+      return;
+    }
+
     const data = JSON.parse(savedData);
 
+    // ----------------------------
     // Scores
+    // ----------------------------
+
     score1 = Number(data.score1) || 0;
     score2 = Number(data.score2) || 0;
 
+
+    // ----------------------------
     // Race targets
+    // ----------------------------
+
     race1 = Number(data.race1) || 8;
     race2 = Number(data.race2) || 9;
 
     race1Input.value = race1;
     race2Input.value = race2;
 
-    // Names
-    if (data.name1) {
+
+    // ----------------------------
+    // Player names
+    // ----------------------------
+
+    if (
+      typeof data.name1 === "string" &&
+      data.name1.trim() !== ""
+    ) {
       name1Input.value = data.name1;
     }
 
-    if (data.name2) {
+    if (
+      typeof data.name2 === "string" &&
+      data.name2.trim() !== ""
+    ) {
       name2Input.value = data.name2;
     }
 
-    // Images
-    if (data.image1) {
+
+    // ----------------------------
+    // Player images
+    // ----------------------------
+
+    if (
+      typeof data.image1 === "string" &&
+      data.image1 !== ""
+    ) {
       playerImage1.src = data.image1;
     }
 
-    if (data.image2) {
+    if (
+      typeof data.image2 === "string" &&
+      data.image2 !== ""
+    ) {
       playerImage2.src = data.image2;
     }
 
+
+    // ----------------------------
     // Winner
+    // ----------------------------
+
     winner = data.winner || null;
+
+
+    // ----------------------------
+    // Update display
+    // ----------------------------
 
     updateDisplay();
 
-  } catch (error) {
-    console.error("Failed to load scoreboard data:", error);
 
-    localStorage.removeItem(STORAGE_KEY);
+    // ----------------------------
+    // Restore winner popup
+    // ----------------------------
+
+    if (winner === 1) {
+      showWinner(
+        name1Input.value || "Player 1"
+      );
+    }
+
+    if (winner === 2) {
+      showWinner(
+        name2Input.value || "Player 2"
+      );
+    }
+
+  } catch (error) {
+    console.error(
+      "Failed to load scoreboard:",
+      error
+    );
+
+    localStorage.removeItem(
+      STORAGE_KEY
+    );
 
     updateDisplay();
   }
 }
 
 
-// ================= UPDATE DISPLAY =================
+// ============================================================
+// UPDATE DISPLAY
+// ============================================================
 
 function updateDisplay() {
   score1Element.textContent = score1;
@@ -147,27 +234,45 @@ function updateDisplay() {
 }
 
 
-// ================= BUTTON STATE =================
+// ============================================================
+// UPDATE BUTTON STATE
+// ============================================================
 
 function updateButtonState() {
+
   const gameFinished = winner !== null;
+
+
+  // Player 1
 
   subtract1.disabled = gameFinished;
   add1.disabled = gameFinished;
 
+
+  // Player 2
+
   subtract2.disabled = gameFinished;
   add2.disabled = gameFinished;
+
+
+  // Race targets
 
   race1Input.disabled = gameFinished;
   race2Input.disabled = gameFinished;
 
+
+  // CSS state
+
   if (gameFinished) {
+
     subtract1.classList.add("disabled");
     add1.classList.add("disabled");
 
     subtract2.classList.add("disabled");
     add2.classList.add("disabled");
+
   } else {
+
     subtract1.classList.remove("disabled");
     add1.classList.remove("disabled");
 
@@ -177,20 +282,29 @@ function updateButtonState() {
 }
 
 
-// ================= CHECK WINNER =================
+// ============================================================
+// CHECK WINNER
+// ============================================================
 
 function checkWinner() {
 
-  // Don't check again if there is already a winner
+  // Someone already won
   if (winner !== null) {
     return;
   }
 
-  // Player 1 wins
+
+  // ----------------------------
+  // Player 1
+  // ----------------------------
+
   if (score1 >= race1) {
+
     winner = 1;
 
-    showWinner(name1Input.value || "Player 1");
+    showWinner(
+      name1Input.value || "Player 1"
+    );
 
     saveState();
 
@@ -199,11 +313,18 @@ function checkWinner() {
     return;
   }
 
-  // Player 2 wins
+
+  // ----------------------------
+  // Player 2
+  // ----------------------------
+
   if (score2 >= race2) {
+
     winner = 2;
 
-    showWinner(name2Input.value || "Player 2");
+    showWinner(
+      name2Input.value || "Player 2"
+    );
 
     saveState();
 
@@ -214,17 +335,26 @@ function checkWinner() {
 }
 
 
-// ================= SHOW WINNER =================
+// ============================================================
+// SHOW WINNER POPUP
+// ============================================================
 
 function showWinner(playerName) {
-  winnerTitle.textContent = playerName;
-  winnerMessage.textContent = "Winner!";
 
+  // Winner's name
+  winnerTitle.textContent = playerName;
+
+  // Message
+  winnerMessage.textContent = "WINS!";
+
+  // Show popup
   winnerOverlay.classList.add("show");
 }
 
 
-// ================= CLOSE WINNER =================
+// ============================================================
+// HIDE WINNER POPUP
+// ============================================================
 
 function hideWinner() {
 
@@ -232,7 +362,9 @@ function hideWinner() {
 }
 
 
-// ================= PLAYER 1 +1 =================
+// ============================================================
+// PLAYER 1 +1
+// ============================================================
 
 add1.addEventListener("click", () => {
 
@@ -240,17 +372,26 @@ add1.addEventListener("click", () => {
     return;
   }
 
+
   score1++;
 
+
+  // Update screen immediately
   updateDisplay();
 
+
+  // Check if Player 1 reached their race
   checkWinner();
 
+
+  // SAVE IMMEDIATELY
   saveState();
 });
 
 
-// ================= PLAYER 1 -1 =================
+// ============================================================
+// PLAYER 1 -1
+// ============================================================
 
 subtract1.addEventListener("click", () => {
 
@@ -258,17 +399,24 @@ subtract1.addEventListener("click", () => {
     return;
   }
 
+
   if (score1 > 0) {
     score1--;
   }
 
+
+  // Update screen
   updateDisplay();
 
+
+  // SAVE IMMEDIATELY
   saveState();
 });
 
 
-// ================= PLAYER 2 +1 =================
+// ============================================================
+// PLAYER 2 +1
+// ============================================================
 
 add2.addEventListener("click", () => {
 
@@ -276,17 +424,26 @@ add2.addEventListener("click", () => {
     return;
   }
 
+
   score2++;
 
+
+  // Update screen
   updateDisplay();
 
+
+  // Check winner
   checkWinner();
 
+
+  // SAVE IMMEDIATELY
   saveState();
 });
 
 
-// ================= PLAYER 2 -1 =================
+// ============================================================
+// PLAYER 2 -1
+// ============================================================
 
 subtract2.addEventListener("click", () => {
 
@@ -294,205 +451,366 @@ subtract2.addEventListener("click", () => {
     return;
   }
 
+
   if (score2 > 0) {
     score2--;
   }
 
+
+  // Update screen
   updateDisplay();
 
+
+  // SAVE IMMEDIATELY
   saveState();
 });
 
 
-// ================= RACE TARGET 1 =================
+// ============================================================
+// PLAYER 1 RACE TARGET
+// ============================================================
 
-race1Input.addEventListener("change", () => {
+race1Input.addEventListener(
+  "change",
+  () => {
 
-  if (winner !== null) {
-    return;
-  }
-
-  let value = parseInt(race1Input.value);
-
-  if (isNaN(value) || value < 1) {
-    value = 1;
-  }
-
-  race1 = value;
-
-  race1Input.value = race1;
-
-  checkWinner();
-
-  saveState();
-
-  updateDisplay();
-});
-
-
-// ================= RACE TARGET 2 =================
-
-race2Input.addEventListener("change", () => {
-
-  if (winner !== null) {
-    return;
-  }
-
-  let value = parseInt(race2Input.value);
-
-  if (isNaN(value) || value < 1) {
-    value = 1;
-  }
-
-  race2 = value;
-
-  race2Input.value = race2;
-
-  checkWinner();
-
-  saveState();
-
-  updateDisplay();
-});
-
-
-// ================= PLAYER NAME 1 =================
-
-name1Input.addEventListener("input", () => {
-
-  saveState();
-
-  // If player already won, update the popup name too
-  if (winner === 1) {
-    winnerMessage.textContent = `${name1Input.value || "Player 1"} wins!`;
-  }
-});
-
-
-// ================= PLAYER NAME 2 =================
-
-name2Input.addEventListener("input", () => {
-
-  saveState();
-
-  // If player already won, update the popup name too
-  if (winner === 2) {
-    winnerMessage.textContent = `${name2Input.value || "Player 2"} wins!`;
-  }
-});
-
-
-// ================= IMAGE UPLOAD =================
-
-imageInputs.forEach((input) => {
-
-  input.addEventListener("change", (event) => {
-
-    const file = event.target.files[0];
-
-    if (!file) {
+    if (winner !== null) {
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file.");
+
+    let value = parseInt(
+      race1Input.value,
+      10
+    );
+
+
+    if (isNaN(value) || value < 1) {
+      value = 1;
+    }
+
+
+    race1 = value;
+
+    race1Input.value = race1;
+
+
+    // Check if current score
+    // already reaches new target
+    checkWinner();
+
+
+    // SAVE IMMEDIATELY
+    saveState();
+
+
+    updateDisplay();
+  }
+);
+
+
+// ============================================================
+// PLAYER 2 RACE TARGET
+// ============================================================
+
+race2Input.addEventListener(
+  "change",
+  () => {
+
+    if (winner !== null) {
       return;
     }
 
-    const reader = new FileReader();
 
-    reader.onload = function (e) {
-
-      const imageData = e.target.result;
-
-      const player = input.dataset.player;
-
-      if (player === "1") {
-        playerImage1.src = imageData;
-      }
-
-      if (player === "2") {
-        playerImage2.src = imageData;
-      }
-
-      saveState();
-    };
-
-    reader.readAsDataURL(file);
-  });
-});
+    let value = parseInt(
+      race2Input.value,
+      10
+    );
 
 
-// ================= RESET =================
+    if (isNaN(value) || value < 1) {
+      value = 1;
+    }
 
-resetButton.addEventListener("click", () => {
 
-  const confirmed = confirm(
-    "Are you sure you want to reset the scoreboard?"
-  );
+    race2 = value;
 
-  if (!confirmed) {
-    return;
+    race2Input.value = race2;
+
+
+    // Check if current score
+    // already reaches new target
+    checkWinner();
+
+
+    // SAVE IMMEDIATELY
+    saveState();
+
+
+    updateDisplay();
   }
-
-  score1 = 0;
-  score2 = 0;
-
-  winner = null;
-
-  // Restore default race targets
-  race1 = 8;
-  race2 = 9;
-
-  race1Input.value = race1;
-  race2Input.value = race2;
-
-  // Restore default names
-  name1Input.value = "Player 1";
-  name2Input.value = "Player 2";
-
-  // Close winner popup
-  hideWinner();
-
-  // Enable controls
-  updateDisplay();
-
-  // Save reset state
-  saveState();
-});
+);
 
 
-// ================= CLOSE POPUP =================
+// ============================================================
+// PLAYER 1 NAME
+// ============================================================
 
-closeWinner.addEventListener("click", () => {
+name1Input.addEventListener(
+  "input",
+  () => {
 
-  hideWinner();
+    // SAVE IMMEDIATELY
+    saveState();
 
-});
+
+    // Update winner popup if
+    // Player 1 already won
+
+    if (winner === 1) {
+
+      winnerTitle.textContent =
+        name1Input.value ||
+        "Player 1";
+    }
+  }
+);
 
 
-// ================= CLICK OUTSIDE POPUP =================
+// ============================================================
+// PLAYER 2 NAME
+// ============================================================
 
-winnerOverlay.addEventListener("click", (event) => {
+name2Input.addEventListener(
+  "input",
+  () => {
 
-  if (event.target === winnerOverlay) {
+    // SAVE IMMEDIATELY
+    saveState();
+
+
+    // Update winner popup if
+    // Player 2 already won
+
+    if (winner === 2) {
+
+      winnerTitle.textContent =
+        name2Input.value ||
+        "Player 2";
+    }
+  }
+);
+
+
+// ============================================================
+// PLAYER IMAGE UPLOAD
+// ============================================================
+
+imageInputs.forEach(
+  (input) => {
+
+    input.addEventListener(
+      "change",
+      (event) => {
+
+        const file =
+          event.target.files[0];
+
+
+        if (!file) {
+          return;
+        }
+
+
+        // Make sure it's an image
+        if (
+          !file.type.startsWith(
+            "image/"
+          )
+        ) {
+
+          alert(
+            "Please select an image file."
+          );
+
+          return;
+        }
+
+
+        const reader =
+          new FileReader();
+
+
+        reader.onload =
+          function (e) {
+
+            const imageData =
+              e.target.result;
+
+
+            const player =
+              input.dataset.player;
+
+
+            if (player === "1") {
+
+              playerImage1.src =
+                imageData;
+            }
+
+
+            if (player === "2") {
+
+              playerImage2.src =
+                imageData;
+            }
+
+
+            // SAVE IMMEDIATELY
+            saveState();
+          };
+
+
+        reader.readAsDataURL(file);
+      }
+    );
+  }
+);
+
+
+// ============================================================
+// RESET
+// ============================================================
+
+resetButton.addEventListener(
+  "click",
+  () => {
+
+    const confirmed =
+      confirm(
+        "Are you sure you want to reset the scoreboard?"
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    // ----------------------------
+    // Reset scores
+    // ----------------------------
+
+    score1 = 0;
+    score2 = 0;
+
+
+    // ----------------------------
+    // Reset winner
+    // ----------------------------
+
+    winner = null;
+
+
+    // ----------------------------
+    // Reset race targets
+    // ----------------------------
+
+    race1 = 8;
+    race2 = 9;
+
+
+    // ----------------------------
+    // Reset names
+    // ----------------------------
+
+    name1Input.value =
+      "Player 1";
+
+    name2Input.value =
+      "Player 2";
+
+
+    // ----------------------------
+    // Reset race inputs
+    // ----------------------------
+
+    race1Input.value = race1;
+    race2Input.value = race2;
+
+
+    // ----------------------------
+    // Close popup
+    // ----------------------------
+
+    hideWinner();
+
+
+    // ----------------------------
+    // Update screen
+    // ----------------------------
+
+    updateDisplay();
+
+
+    // ----------------------------
+    // SAVE RESET IMMEDIATELY
+    // ----------------------------
+
+    saveState();
+  }
+);
+
+
+// ============================================================
+// CLOSE WINNER BUTTON
+// ============================================================
+
+closeWinner.addEventListener(
+  "click",
+  () => {
+
     hideWinner();
   }
+);
 
-});
 
+// ============================================================
+// CLICK OUTSIDE WINNER POPUP
+// ============================================================
 
-// ================= ESC KEY =================
+winnerOverlay.addEventListener(
+  "click",
+  (event) => {
 
-document.addEventListener("keydown", (event) => {
+    if (
+      event.target ===
+      winnerOverlay
+    ) {
 
-  if (event.key === "Escape") {
-    hideWinner();
+      hideWinner();
+    }
   }
+);
 
-});
+
+// ============================================================
+// ESC KEY
+// ============================================================
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+
+    if (event.key === "Escape") {
+      hideWinner();
+    }
+  }
+);
 
 
-// ================= INITIALIZE =================
+// ============================================================
+// INITIALIZE
+// ============================================================
 
 loadState();
