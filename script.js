@@ -9,8 +9,8 @@
 let score1 = 0;
 let score2 = 0;
 
-let race1 = 0;
-let race2 = 0;
+let race1 = 10;
+let race2 = 10;
 
 let winner = null;
 
@@ -716,8 +716,8 @@ resetButton.addEventListener(
     // Reset race targets
     // ----------------------------
 
-    race1 = 0;
-    race2 = 0;
+    race1 = 10;
+    race2 = 10;
 
 
     // ----------------------------
